@@ -32,7 +32,6 @@ class Ingredient(models.Model):
         max_length=200,
         verbose_name='Имя ингридиента',
         help_text='Имя игридиента',
-        unique=True,
     )
     measurement_unit = models.ForeignKey(
         MeasurementUnit,

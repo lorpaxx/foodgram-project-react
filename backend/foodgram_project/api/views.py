@@ -1,6 +1,6 @@
 from api.serializers import IngredientSerializer
 from ingredients.models import Ingredient
-from rest_framework import mixins, viewsets
+from rest_framework import filters, mixins, viewsets
 
 
 class IngredientViewSet(
@@ -13,3 +13,5 @@ class IngredientViewSet(
     '''
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
