@@ -3,7 +3,7 @@ import os
 
 from django.core.management.base import BaseCommand
 from foodgram_project.settings import BASE_DIR
-from ingredients.models import Ingredient, MeasurementUnit
+from tags.models import Tag
 
 
 class Command(BaseCommand):
@@ -17,18 +17,15 @@ class Command(BaseCommand):
         Основная функция выполнения команды.
         '''
         print(self.shift_path)
-        filename = os.path.join(self.shift_path, 'ingredients.csv')
+        filename = os.path.join(self.shift_path, 'tags.csv')
         with open(filename, 'r', encoding='utf-8') as f:
             csv_reader = csv.reader(f, delimiter=',', quotechar='"')
             for row in csv_reader:
-                unit_data = row[1].strip().lower()
-                ingrid_data = row[0].strip().lower()
-                unit, _ = MeasurementUnit.objects.get_or_create(
-                    name=unit_data
+                name = row[0]
+                color = row[1]
+                slug = row[2]
+                tag = Tag.objects.create(
+                    name=name, color=color, slug=slug
                 )
-                Ingredient.objects.create(
-                    name=ingrid_data, measurement_unit=unit
-                )
-
-        print(MeasurementUnit.objects.count())
-        print(Ingredient.objects.count())
+                print(tag)
+        print(Tag.objects.count())
