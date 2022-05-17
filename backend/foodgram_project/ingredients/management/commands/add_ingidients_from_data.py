@@ -20,6 +20,7 @@ class Command(BaseCommand):
         filename = os.path.join(self.shift_path, 'ingredients.csv')
         with open(filename, 'r', encoding='utf-8') as f:
             csv_reader = csv.reader(f, delimiter=',', quotechar='"')
+            m_units = set()
             for row in csv_reader:
                 unit_data = row[1].strip().lower()
                 ingrid_data = row[0].strip().lower()
