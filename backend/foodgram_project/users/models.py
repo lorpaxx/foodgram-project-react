@@ -21,11 +21,6 @@ class User(AbstractUser):
         help_text='Адрес электронной почты',
         unique=True,
     )
-    password = models.CharField(
-        verbose_name='Пароль',
-        help_text='Пароль',
-        max_length=150,
-    )
     username = models.CharField(
         verbose_name='Уникальный юзернейм',
         help_text='Уникальный юзернейм',
