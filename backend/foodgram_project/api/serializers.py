@@ -2,10 +2,10 @@ from re import match
 
 from django.contrib.auth import get_user_model, password_validation
 from django.core import exceptions
-# from drf_extra_fields.fields import Base64ImageField
+from drf_extra_fields.fields import Base64ImageField
 from ingredients.models import Ingredient, MeasurementUnit
-from recipes.models import Recipe, RecipeIngredientAmount
-from rest_framework import serializers
+from recipes.models import Recipe, RecipeIngredientAmount, RecipeTag
+from rest_framework import serializers, status
 from tags.models import Tag
 
 User = get_user_model()
@@ -46,7 +46,7 @@ class IngredientForRecipeSerializer(serializers.ModelSerializer):
             'name',
             'measurement_unit',
             'amount',
-    )
+        )
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -196,9 +196,82 @@ class ResipeSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time',
         )
-    
+
     def get_is_favorited(self, obj):
         return False
-    
+
     def get_is_in_shopping_cart(self, obj):
         return False
+
+
+class AmountSerialazer(serializers.Serializer):
+    '''
+    Класс AmountSerialazer.
+    '''
+    id = serializers.IntegerField(required=True)
+    amount = serializers.IntegerField(required=True)
+
+    def validate_id(self, value):
+        if Ingredient.objects.filter(pk=value).exists():
+            return value
+        raise serializers.ValidationError(
+            f'ingredients with id = {value} does not exists',
+            status.HTTP_404_NOT_FOUND
+        )
+
+    def validate_amount(self, value):
+        if value > 0:
+            return value
+        raise serializers.ValidationError(
+            'amount mast be > 0!!'
+        )
+
+
+class ResipeEditSerializer(serializers.ModelSerializer):
+    '''
+    Класс ResipeEditSerializer.
+    '''
+    ingredients = AmountSerialazer(many=True, required=True)
+    tags = serializers.SlugRelatedField(
+        slug_field='id',
+        queryset=Tag.objects.all(),
+        many=True,
+    )
+    image = Base64ImageField(required=True)
+
+    class Meta:
+        model = Recipe
+        fields = (
+            'ingredients',
+            'tags',
+            'image',
+            'name',
+            'text',
+            'cooking_time',
+            'author',
+        )
+        read_only_fields = ('author',)
+
+    def validate_cooking_time(self, value):
+        if value > 0:
+            return value
+        raise serializers.ValidationError(
+            'cooking_time mast be > 0!!'
+        )
+
+    def create(self, validated_data):
+        user = self.context.get('user')
+        ingreds = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data, author=user)
+        for tag in tags:
+            RecipeTag.objects.create(recipe=recipe, tag=tag)
+        for data_value in ingreds:
+            ingrid = Ingredient.objects.get(id=data_value['id'])
+            amount = data_value['amount']
+            RecipeIngredientAmount.objects.create(
+                recipe=recipe, ingredient=ingrid, amount=amount
+            )
+        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+        print(recipe)
+        return recipe

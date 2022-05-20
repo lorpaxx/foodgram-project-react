@@ -1,7 +1,7 @@
 from api.paginators import PageNumberCustomPaginator
 from api.serializers import (GetTokenSerializer, IngredientSerializer,
-                             ResipeSerializer, TagSerializer,
-                             UserChangePasswordSerializer,
+                             ResipeEditSerializer, ResipeSerializer,
+                             TagSerializer, UserChangePasswordSerializer,
                              UserCreateSerializer, UserSerializer)
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -23,7 +23,6 @@ def get_token(request):
     email = serializer.validated_data.get('email')
     password = serializer.validated_data.get('password')
     user = get_object_or_404(User, email=email)
-    print(user)
     if (user.check_password(password)):
         token, created = Token.objects.get_or_create(user=user)
         return Response(
@@ -120,3 +119,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = ResipeSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def create(self, request, *args, **kwargs):
+        serializer = ResipeEditSerializer(
+            data=request.data,
+            context={'user': request.user}
+        )
+        serializer.is_valid(raise_exception=True)
+        print(serializer.validated_data)
+        self.perform_create(serializer)
+        print('#########################')
+        # headers = self.get_success_headers(serializer.data)
+        print(serializer.instance)
+        output_serializer = ResipeSerializer(serializer.instance)
+        return Response(
+            output_serializer.data,
+            status=status.HTTP_201_CREATED,
+            # headers=headers
+        )

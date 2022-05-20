@@ -58,6 +58,12 @@ class Recipe(models.Model):
             ),
         )
 
+    def __str__(self) -> str:
+        return f'Рецепт: {self.name} пользователя {self.author}'
+
+    def __repr__(self) -> str:
+        return f'Рецепт: {self.name} пользователя {self.author}'
+
 
 class RecipeTag(models.Model):
     '''
@@ -86,6 +92,12 @@ class RecipeTag(models.Model):
                 name='unigue_tag_for_recipe'
             ),
         )
+
+    def __str__(self) -> str:
+        return f'{self.recipe}, {self.tag}'
+
+    def __repr__(self) -> str:
+        return f'{self.recipe}, {self.tag}'
 
 
 class RecipeIngredientAmount(models.Model):
@@ -119,3 +131,9 @@ class RecipeIngredientAmount(models.Model):
                 name='amount_gt_zero'
             )
         )
+
+    def __str__(self) -> str:
+        return f'{self.recipe}, {self.ingredient}'
+
+    def __repr__(self) -> str:
+        return f'{self.recipe}, {self.ingredient}'
