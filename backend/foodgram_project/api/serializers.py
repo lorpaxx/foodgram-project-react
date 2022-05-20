@@ -2,7 +2,9 @@ from re import match
 
 from django.contrib.auth import get_user_model, password_validation
 from django.core import exceptions
+# from drf_extra_fields.fields import Base64ImageField
 from ingredients.models import Ingredient, MeasurementUnit
+from recipes.models import Recipe, RecipeIngredientAmount
 from rest_framework import serializers
 from tags.models import Tag
 
@@ -27,6 +29,26 @@ class IngredientSerializer(serializers.ModelSerializer):
         )
 
 
+class IngredientForRecipeSerializer(serializers.ModelSerializer):
+    '''
+    Класс IngredientForRecipeSerializer.
+    '''
+    id = serializers.IntegerField(source='ingredient.id')
+    name = serializers.CharField(source='ingredient.name')
+    measurement_unit = serializers.CharField(
+        source='ingredient.measurement_unit.name'
+    )
+
+    class Meta:
+        model = RecipeIngredientAmount
+        fields = (
+            'id',
+            'name',
+            'measurement_unit',
+            'amount',
+    )
+
+
 class TagSerializer(serializers.ModelSerializer):
     '''
     Класс TagSerializer для модели Tag.
@@ -42,6 +64,9 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class GetTokenSerializer(serializers.Serializer):
+    '''
+    Класс GetTokenSerializer для получения токена.
+    '''
     email = serializers.CharField()
     password = serializers.CharField()
 
@@ -51,6 +76,9 @@ class GetTokenSerializer(serializers.Serializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
+    '''
+    Класс UserCreateSerializer для регистрации пользователя модели User.
+    '''
     password = serializers.CharField(
         max_length=150,
         write_only=True,
@@ -92,6 +120,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    '''
+    Класс UserSerializer для модели User.
+    '''
     is_subscribed = serializers.SerializerMethodField(
         method_name='get_is_subscribed'
     )
@@ -112,6 +143,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserChangePasswordSerializer(serializers.Serializer):
+    '''
+    Класс UserChangePasswordSerializer для смены пароля модели User.
+    '''
     current_password = serializers.CharField()
     new_password = serializers.CharField(max_length=150)
 
@@ -129,3 +163,42 @@ class UserChangePasswordSerializer(serializers.Serializer):
         except exceptions.ValidationError as e:
             raise serializers.ValidationError(list(e))
         return value
+
+
+class ResipeSerializer(serializers.ModelSerializer):
+    '''
+    Класс ResipeSerializer для модели Recipe.
+    '''
+    tags = TagSerializer(required=True, many=True)
+    author = UserSerializer()
+    ingredients = IngredientForRecipeSerializer(
+        source='recipeingredientamount_set',
+        many=True
+    )
+    is_favorited = serializers.SerializerMethodField(
+        method_name='get_is_favorited'
+    )
+    is_in_shopping_cart = serializers.SerializerMethodField(
+        method_name='get_is_in_shopping_cart'
+    )
+
+    class Meta:
+        model = Recipe
+        fields = (
+            'id',
+            'tags',
+            'author',
+            'ingredients',
+            'is_favorited',
+            'is_in_shopping_cart',
+            'name',
+            'image',
+            'text',
+            'cooking_time',
+        )
+    
+    def get_is_favorited(self, obj):
+        return False
+    
+    def get_is_in_shopping_cart(self, obj):
+        return False

@@ -1,10 +1,12 @@
 from api.paginators import PageNumberCustomPaginator
 from api.serializers import (GetTokenSerializer, IngredientSerializer,
-                             TagSerializer, UserChangePasswordSerializer,
+                             ResipeSerializer, TagSerializer,
+                             UserChangePasswordSerializer,
                              UserCreateSerializer, UserSerializer)
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from ingredients.models import Ingredient
+from recipes.models import Recipe
 from rest_framework import (decorators, filters, mixins, permissions, status,
                             viewsets)
 from rest_framework.authtoken.models import Token
@@ -77,7 +79,6 @@ class UserViewSet(
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        # output_serializer = UserCreateOutputSerializer(serializer.instance)
         return Response(
             serializer.data,
             status=status.HTTP_201_CREATED,
@@ -113,3 +114,9 @@ class UserViewSet(
         user.set_password(serializer.validated_data.get('new_password'))
         user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RecipeViewSet(viewsets.ModelViewSet):
+    queryset = Recipe.objects.all()
+    serializer_class = ResipeSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)

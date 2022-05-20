@@ -7,8 +7,8 @@ class MeasurementUnit(models.Model):
     '''
     name = models.CharField(
         max_length=200,
-        verbose_name='Наименование',
-        help_text='Наименование',
+        verbose_name='Название',
+        help_text='Название',
         unique=True,
     )
 
@@ -40,12 +40,19 @@ class Ingredient(models.Model):
         related_name='ingredients',
         verbose_name='Размерность',
         help_text='Размерность',
+        db_index=True,
     )
 
     class Meta:
         verbose_name = 'Ингридиент'
         verbose_name_plural = 'Ингридиенты'
         ordering = ('name',)
+        # constraints = (
+        #     models.UniqueConstraint(
+        #         fields=('name', 'measurement_unit'),
+        #         name='unique_ingredient'
+        #     ),
+        # )
 
     def __str__(self) -> str:
         return f'Ингридиент: {self.name}'
