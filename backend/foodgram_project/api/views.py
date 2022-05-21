@@ -1,4 +1,5 @@
 from api.paginators import PageNumberCustomPaginator
+from api.permissions import AuthorOrReadOnly
 from api.serializers import (GetTokenSerializer, IngredientSerializer,
                              ResipeEditSerializer, ResipeSerializer,
                              TagSerializer, UserChangePasswordSerializer,
@@ -118,7 +119,7 @@ class UserViewSet(
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = ResipeSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (AuthorOrReadOnly,)
 
     def create(self, request, *args, **kwargs):
         serializer = ResipeEditSerializer(
@@ -126,14 +127,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
             context={'user': request.user}
         )
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
         self.perform_create(serializer)
-        print('#########################')
-        # headers = self.get_success_headers(serializer.data)
-        print(serializer.instance)
         output_serializer = ResipeSerializer(serializer.instance)
         return Response(
             output_serializer.data,
             status=status.HTTP_201_CREATED,
-            # headers=headers
         )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = ResipeEditSerializer(
+            instance, data=request.data, partial=partial
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        output_serializer = ResipeSerializer(serializer.instance)
+        return Response(
+            output_serializer.data,
+            status=status.HTTP_200_OK,)

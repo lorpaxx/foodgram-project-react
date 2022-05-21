@@ -248,9 +248,9 @@ class ResipeEditSerializer(serializers.ModelSerializer):
             'name',
             'text',
             'cooking_time',
-            'author',
+            # 'author',
         )
-        read_only_fields = ('author',)
+        # read_only_fields = ('author',)
 
     def validate_cooking_time(self, value):
         if value > 0:
@@ -259,19 +259,44 @@ class ResipeEditSerializer(serializers.ModelSerializer):
             'cooking_time mast be > 0!!'
         )
 
+    def validate_ingredients(self, value):
+        print(value)
+        return value
+
     def create(self, validated_data):
         user = self.context.get('user')
-        ingreds = validated_data.pop('ingredients')
+        ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
-        recipe = Recipe.objects.create(**validated_data, author=user)
+        recipe: Recipe = Recipe.objects.create(**validated_data, author=user)
         for tag in tags:
-            RecipeTag.objects.create(recipe=recipe, tag=tag)
-        for data_value in ingreds:
-            ingrid = Ingredient.objects.get(id=data_value['id'])
+            recipe.tags.add(tag)
+        for data_value in ingredients:
+            ingredient = Ingredient.objects.get(id=data_value['id'])
             amount = data_value['amount']
             RecipeIngredientAmount.objects.create(
-                recipe=recipe, ingredient=ingrid, amount=amount
+                recipe=recipe, ingredient=ingredient, amount=amount
             )
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-        print(recipe)
+        return recipe
+
+    def update(self, instance, validated_data):
+
+        recipe: Recipe = instance
+
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+
+        for key, value in validated_data.items():
+            setattr(recipe, key, value)
+        recipe.save()
+
+        RecipeTag.objects.filter(recipe=recipe).delete()
+        for tag in tags:
+            recipe.tags.add(tag)
+        RecipeIngredientAmount.objects.filter(recipe=recipe).delete()
+        for data_value in ingredients:
+            ingredient = Ingredient.objects.get(id=data_value['id'])
+            amount = data_value['amount']
+            RecipeIngredientAmount.objects.create(
+                recipe=recipe, ingredient=ingredient, amount=amount
+            )
         return recipe
