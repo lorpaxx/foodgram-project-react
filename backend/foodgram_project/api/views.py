@@ -4,7 +4,9 @@ from api.serializers import (GetTokenSerializer, IngredientSerializer,
                              ResipeEditSerializer, ResipeSerializer,
                              ResipeShortSerializer, TagSerializer,
                              UserChangePasswordSerializer,
-                             UserCreateSerializer, UserSerializer)
+                             UserCreateSerializer, UserSerializer,
+                             UserSubscribeSerializer)
+from api.views_side_func import manage_many_to_many_model_with_user
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.http import HttpResponse
@@ -17,6 +19,7 @@ from rest_framework import (decorators, filters, mixins, permissions, status,
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from tags.models import Tag
+from users.models import SubscribeUser
 
 User = get_user_model()
 
@@ -119,6 +122,40 @@ class UserViewSet(
         user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @decorators.action(
+        methods=('post', 'delete'),
+        permission_classes=(permissions.IsAuthenticated,),
+        detail=True,
+        url_path='subscribe',
+        url_name='subscribe'
+    )
+    def manage_subscribe(self, request, *args, **kwargs):
+        return manage_many_to_many_model_with_user(
+            request, *args, **kwargs,
+            second_model=User,
+            second_model_name='author',
+            serializer_class=UserSubscribeSerializer,
+            many_to_many_model=SubscribeUser
+        )
+
+    @decorators.action(
+        methods=('get',),
+        permission_classes=(permissions.IsAuthenticated,),
+        detail=False,
+        url_path='subscriptions',
+        url_name='subscriptions'
+    )
+    def subscriptions(self, request, *args, **kwargs):
+        user = request.user
+        queryset = User.objects.filter(subscribe__user=user)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = UserSubscribeSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = UserSubscribeSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
@@ -159,40 +196,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name='favorite',
     )
     def manage_favorite(self, request, *args, **kwargs):
-        user = request.user
-        recipe_id = kwargs.get('pk', 0)
-        if not Recipe.objects.filter(id=recipe_id).exists():
-            return Response(
-                {'errors': f'recipe with id={recipe_id} does not exists'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        recipe = Recipe.objects.get(id=recipe_id)
-
-        if request.method == 'POST':
-            row, created = UserFavoriteRecipe.objects.get_or_create(
-                recipe=recipe, user=user
-            )
-            if created:
-                serializer = ResipeShortSerializer(instance=recipe)
-                return Response(
-                    serializer.data,
-                    status=status.HTTP_201_CREATED
-                )
-            return Response(
-                {'errors': 'the recipe is already in favorites'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if UserFavoriteRecipe.objects.filter(
-            user=user, recipe=recipe
-        ).exists():
-            obj = UserFavoriteRecipe.objects.get(user=user, recipe=recipe)
-            obj.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        return Response(
-            {'errors': 'the recipe is not in favorites'},
-            status=status.HTTP_400_BAD_REQUEST,
+        return manage_many_to_many_model_with_user(
+            request, *args, **kwargs,
+            second_model=Recipe,
+            second_model_name='recipe',
+            serializer_class=ResipeShortSerializer,
+            many_to_many_model=UserFavoriteRecipe,
         )
 
     @decorators.action(
@@ -203,40 +212,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name='shopping_cart',
     )
     def manager_sopping_cart(self, request, *args, **kwargs):
-        user = request.user
-        recipe_id = kwargs.get('pk', 0)
-        if not Recipe.objects.filter(id=recipe_id).exists():
-            return Response(
-                {'errors': f'recipe with id={recipe_id} does not exists'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        recipe = Recipe.objects.get(id=recipe_id)
-
-        if request.method == 'POST':
-            row, created = UserShoppingCart.objects.get_or_create(
-                recipe=recipe, user=user
-            )
-            if created:
-                serializer = ResipeShortSerializer(instance=recipe)
-                return Response(
-                    serializer.data,
-                    status=status.HTTP_201_CREATED
-                )
-            return Response(
-                {'errors': 'the recipe is already in shopping cart'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if UserShoppingCart.objects.filter(
-            user=user, recipe=recipe
-        ).exists():
-            obj = UserShoppingCart.objects.get(user=user, recipe=recipe)
-            obj.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        return Response(
-            {'errors': 'the recipe is not in shopping cart'},
-            status=status.HTTP_400_BAD_REQUEST,
+        return manage_many_to_many_model_with_user(
+            request, *args, **kwargs,
+            second_model=Recipe,
+            second_model_name='recipe',
+            serializer_class=ResipeShortSerializer,
+            many_to_many_model=UserShoppingCart
         )
 
     @decorators.action(

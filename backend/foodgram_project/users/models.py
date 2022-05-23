@@ -48,7 +48,7 @@ class SubscribeUser(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         null=False,
-        related_name='in_subscribe',
+        related_name='subscribe',
         verbose_name='Автор',
         help_text='Автор, на которого подписаны'
     )

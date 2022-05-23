@@ -331,6 +331,14 @@ class ResipeEditSerializer(serializers.ModelSerializer):
         return recipe
 
 
+class ResipeShortListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        user = self.context['request'].user
+        print(self.context['request'].query_params)
+        data = data.filter(recipe=user.recipes.all())
+        return super(ResipeShortListSerializer, self).to_representation(data)
+
+
 class ResipeShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
@@ -340,3 +348,32 @@ class ResipeShortSerializer(serializers.ModelSerializer):
             'image',
             'cooking_time'
         )
+    list_serializer_class = ResipeShortListSerializer
+
+
+class UserSubscribeSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField(
+        method_name='get_is_subscribed'
+    )
+    recipes = ResipeShortSerializer(many=True)
+    recipes_count = serializers.SerializerMethodField(
+        method_name='get_recipes_count'
+    )
+
+    class Meta:
+        model = User
+        fields = (
+            'email', 'id', 'username',
+            'first_name', 'last_name',
+            'is_subscribed', 'recipes',
+            'recipes_count',
+        )
+
+    def get_is_subscribed(self, user_obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return True
+        return False
+
+    def get_recipes_count(self, user_obj):
+        return user_obj.recipes.count()
