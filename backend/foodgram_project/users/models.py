@@ -31,3 +31,38 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+
+class SubscribeUser(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name='subscribes',
+        verbose_name='Подписки пользователя',
+        help_text='Подписки пользователя'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name='in_subscribe',
+        verbose_name='Автор',
+        help_text='Автор, на которого подписаны'
+    )
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = (
+            models.UniqueConstraint(
+                fields=('user', 'author'),
+                name='unique_subscribe'
+            ),
+            models.CheckConstraint(
+                check=~(models.Q(user=models.F('author'))),
+                name='user_is_not_author'
+            ),
+        )

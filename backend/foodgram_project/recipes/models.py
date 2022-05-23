@@ -101,6 +101,9 @@ class RecipeTag(models.Model):
 
 
 class RecipeIngredientAmount(models.Model):
+    '''
+    Класс RecipeIngredientAmount.
+    '''
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -137,3 +140,65 @@ class RecipeIngredientAmount(models.Model):
 
     def __repr__(self) -> str:
         return f'{self.recipe}, {self.ingredient}'
+
+
+class UserFavoriteRecipe(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name='favorite_recipes',
+        verbose_name='Пользователь',
+        help_text='Пользователь'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name='in_favorite',
+        verbose_name='Рецепт',
+        help_text='Рецепт'
+    )
+
+    class Meta:
+        verbose_name = 'Любимый рецепт'
+        verbose_name_plural = 'Любимые рецепты'
+        constraints = (
+            models.UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='unigue_recipe_user_favorite'
+            ),
+        )
+
+
+class UserShoppingCart(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name='shopping_recipes',
+        verbose_name='Пользователь',
+        help_text='Пользователь'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name='in_shopping',
+        verbose_name='Рецепт',
+        help_text='Рецепт'
+    )
+
+    class Meta:
+        verbose_name = 'Любимый рецепт'
+        verbose_name_plural = 'Любимые рецепты'
+        constraints = (
+            models.UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='unigue_recipe_user_shoping'
+            ),
+        )
