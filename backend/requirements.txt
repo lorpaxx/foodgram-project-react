@@ -5,3 +5,4 @@ djangorestframework==3.12.4
 django-extra-fields==3.0.2
 Pillow==9.1.1
 psycopg2-binary==2.9.3
+django-filter==21.1

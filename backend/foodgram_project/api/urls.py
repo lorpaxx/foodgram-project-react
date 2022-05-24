@@ -6,7 +6,7 @@ from rest_framework.routers import DefaultRouter
 app_name = 'api'
 
 router = DefaultRouter()
-router.register('ingredients', IngredientViewSet)
+router.register('ingredients', IngredientViewSet, basename='ingredients')
 router.register('tags', TagViewSet)
 router.register('users', UserViewSet)
 router.register('recipes', RecipeViewSet)

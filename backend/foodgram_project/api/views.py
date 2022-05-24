@@ -11,11 +11,11 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+# from django_filters.rest_framework import DjangoFilterBackend
 from ingredients.models import Ingredient
 from recipes.models import (Recipe, RecipeIngredientAmount, UserFavoriteRecipe,
                             UserShoppingCart)
-from rest_framework import (decorators, filters, mixins, permissions, status,
-                            viewsets)
+from rest_framework import decorators, mixins, permissions, status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from tags.models import Tag
@@ -59,8 +59,14 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     '''
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
+
+    def get_queryset(self):
+        param_name = self.request.query_params.get('name', None)
+        if param_name:
+            self.queryset = self.queryset.filter(
+                name__startswith=param_name.lower()
+                ).order_by('name')
+        return super().get_queryset()
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):

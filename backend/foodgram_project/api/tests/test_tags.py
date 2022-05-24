@@ -4,6 +4,9 @@ from tags.models import Tag
 
 
 class TagsTests(APITestCase):
+    '''
+    Тестируем /api/tags/.
+    '''
     @classmethod
     def setUpClass(cls):
         '''
@@ -23,7 +26,7 @@ class TagsTests(APITestCase):
         '''
         self.client = APIClient()
 
-    def test_api_test_tags_url_list(self):
+    def test_api_tags_01_url_list(self):
         '''
         Проверяем /api/tags/ доступность всего списка.
         '''
@@ -33,7 +36,7 @@ class TagsTests(APITestCase):
             resp.status_code, status.HTTP_200_OK,
         )
 
-    def test_api_test_tags_url_retrieve(self):
+    def test_api_tags_02_url_retrieve(self):
         '''
         Проверяем /api/tags/ доступность одного элемента.
         '''
@@ -43,7 +46,7 @@ class TagsTests(APITestCase):
             resp.status_code, status.HTTP_200_OK,
         )
 
-    def test_api_test_tags_url_retrieve_not_exist(self):
+    def test_api_tags_03_url_retrieve_not_exist(self):
         '''
         Проверяем /api/tags/ недоступность несуществующего элемента.
         '''
@@ -53,7 +56,7 @@ class TagsTests(APITestCase):
             resp.status_code, status.HTTP_404_NOT_FOUND,
         )
 
-    def test_api_test_tags_retrieve_correct_fields(self):
+    def test_api_tags_04_retrieve_correct_fields(self):
         '''
         Проверяем /api/tags/2/ корректность получаемых данных.
         '''
@@ -85,7 +88,7 @@ class TagsTests(APITestCase):
                     f'Поле {field} не верное значение'
                 )
 
-    def test_api_test_tags_list_correct(self):
+    def test_api_tags_05_list_correct(self):
         '''
         Проверяем /api/tags/ корректность получаемых данных.
         '''
@@ -112,6 +115,10 @@ class TagsTests(APITestCase):
                     'В словаре нет ключа id'
                 )
                 fields_name = ['name', 'color', 'slug']
+                self.assertEqual(
+                    len(tag_data), len(fields_name) + 1,
+                    'Число ключей в ответе не соответствует ожидаемым'
+                )
                 id = tag_data.get('id')
                 tag = Tag.objects.get(id=id)
                 for field_name in fields_name:
