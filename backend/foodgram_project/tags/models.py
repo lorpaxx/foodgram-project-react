@@ -30,7 +30,7 @@ class Tag(models.Model):
         ordering = ('slug',)
 
     def __str__(self):
-        return f'Тег: {self.slug}-{self.color}'
+        return f'Tag: {self.slug}-{self.color}'
 
     def __repr__(self):
-        return f'Тег: {self.slug}-{self.color}'
+        return f'Tag: {self.slug}-{self.color}'

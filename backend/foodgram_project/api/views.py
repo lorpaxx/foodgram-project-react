@@ -157,6 +157,7 @@ class UserViewSet(
         serializer = UserSubscribeSerializer(queryset, many=True)
         return Response(serializer.data)
 
+
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = ResipeSerializer
