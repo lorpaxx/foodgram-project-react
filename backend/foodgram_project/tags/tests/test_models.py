@@ -4,7 +4,7 @@ from tags.models import Tag
 
 class TagModelsTest(TestCase):
     '''
-    Тестируем модель Group.
+    Тестируем модель Tag.
     '''
     @classmethod
     def setUpClass(cls):
@@ -100,7 +100,7 @@ class TagModelsTest(TestCase):
         field_unique = {
             'name': True,
             'slug': True,
-            'color': False
+            'color': True
         }
         tag: Tag = TagModelsTest.tag
         for field, expected_value in field_unique.items():
