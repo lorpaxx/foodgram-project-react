@@ -1,3 +1,4 @@
+from api.filters import IngredientFilter
 from api.paginators import PageNumberCustomPaginator
 from api.permissions import AuthorOrReadOnly
 from api.serializers import (GetTokenSerializer, IngredientSerializer,
@@ -11,7 +12,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-# from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend
 from ingredients.models import Ingredient
 from recipes.models import (Recipe, RecipeIngredientAmount, UserFavoriteRecipe,
                             UserShoppingCart)
@@ -59,14 +60,10 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     '''
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-
-    def get_queryset(self):
-        param_name = self.request.query_params.get('name', None)
-        if param_name:
-            self.queryset = self.queryset.filter(
-                name__startswith=param_name.lower()
-                ).order_by('name')
-        return super().get_queryset()
+    filter_backends = (
+        DjangoFilterBackend,
+    )
+    filterset_class = IngredientFilter
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
