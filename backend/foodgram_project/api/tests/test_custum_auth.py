@@ -28,7 +28,7 @@ class CustumAuthTest(APITestCase):
 
     def setUp(self):
         '''
-        Создадим гостевой клиент для каждого теста.
+        Создадим клиенты для каждого теста.
         '''
         self.client = APIClient()
         self.auth_client = APIClient()

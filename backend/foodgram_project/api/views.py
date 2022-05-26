@@ -64,6 +64,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
         DjangoFilterBackend,
     )
     filterset_class = IngredientFilter
+    pagination_class = None
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -72,6 +73,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     '''
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    pagination_class = None
 
 
 class UserViewSet(

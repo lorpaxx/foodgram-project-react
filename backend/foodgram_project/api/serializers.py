@@ -8,6 +8,7 @@ from recipes.models import (Recipe, RecipeIngredientAmount, RecipeTag,
                             UserFavoriteRecipe, UserShoppingCart)
 from rest_framework import serializers
 from tags.models import Tag
+from users.models import SubscribeUser
 
 User = get_user_model()
 
@@ -139,7 +140,12 @@ class UserSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, user_obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
-            return True
+            user: User = request.user
+            return (
+                SubscribeUser.objects
+                .filter(user=user, author=user_obj)
+                .exists()
+            )
         return False
 
 
@@ -372,7 +378,12 @@ class UserSubscribeSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, user_obj):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
-            return True
+            user: User = request.user
+            return (
+                SubscribeUser.objects
+                .filter(user=user, author=user_obj)
+                .exists()
+            )
         return False
 
     def get_recipes_count(self, user_obj):
