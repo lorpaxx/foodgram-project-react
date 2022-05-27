@@ -1,4 +1,4 @@
-from api.filters import IngredientFilter
+from api.filters import IngredientFilter, RecipeFilter
 from api.paginators import PageNumberCustomPaginator
 from api.permissions import AuthorOrReadOnly
 from api.serializers import (GetTokenSerializer, IngredientSerializer,
@@ -167,6 +167,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = ResipeSerializer
     permission_classes = (AuthorOrReadOnly,)
+    filter_backends = (
+        DjangoFilterBackend,
+    )
+    filterset_class = RecipeFilter
+    pagination_class = PageNumberCustomPaginator
+
+    # def get_queryset(self):
+    #     print(self.request.query_params)
+    #     return super().get_queryset()
 
     def create(self, request, *args, **kwargs):
         serializer = ResipeEditSerializer(
