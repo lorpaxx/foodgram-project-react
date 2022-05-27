@@ -31,7 +31,7 @@ class Recipe(models.Model):
         help_text='Время приготовления (в минутах)',
     )
     image = models.ImageField(
-        'Картинка, закодированная в Base64',
+        'Картинка',
         upload_to='recipes/',
     )
     tags = models.ManyToManyField(
@@ -194,8 +194,8 @@ class UserShoppingCart(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Любимый рецепт'
-        verbose_name_plural = 'Любимые рецепты'
+        verbose_name = 'Покупка'
+        verbose_name_plural = 'Покупки'
         constraints = (
             models.UniqueConstraint(
                 fields=('user', 'recipe'),

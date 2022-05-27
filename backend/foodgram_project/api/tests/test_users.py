@@ -154,7 +154,7 @@ class UsersTests(APITestCase):
                     f'в ответе {field} не совпадает с ожидаемым.'
                 )
 
-    def test_api_users_04_url_test_list(self):
+    def test_api_users_05_url_test_list(self):
         '''
         Тестируем '/api/users/.
         '''
@@ -237,7 +237,7 @@ class UsersTests(APITestCase):
                         f'В ответе {field} не совпадает с ожидаемым'
                     )
 
-    def test_api_users_05_url_test_create_valid(self):
+    def test_api_users_06_url_test_create_valid(self):
         '''
         Тестируем /api/users/ создание пользователей.
         '''
@@ -282,7 +282,7 @@ class UsersTests(APITestCase):
                     f'В ответе ключ {field} не совпадает с ожидаемым.'
                 )
 
-    def test_api_users_06_url_test_create_invalid(self):
+    def test_api_users_07_url_test_create_invalid(self):
         user_data = {
             'first_name': 'Тест',
             'last_name': 'Тестович',
@@ -311,7 +311,7 @@ class UsersTests(APITestCase):
 
                 self.assertIn(field, resp_data)
 
-    def test_api_users_07_url_test_is_subscribed(self):
+    def test_api_users_08_url_test_is_subscribed(self):
         '''
         Проверяем коррестоность работы поля is_subscribed.
         '''
@@ -352,7 +352,7 @@ class UsersTests(APITestCase):
                 self.assertEqual(
                     resp.json().get('is_subscribed'), value)
 
-    def test_api_users_08_url_test_me(self):
+    def test_api_users_09_url_test_me(self):
         '''
         Проверяем работу /api/users/me.
         '''
@@ -397,7 +397,7 @@ class UsersTests(APITestCase):
                     f'в ответе {field} не совпадает с ожидаемым.'
                 )
 
-    def test_api_users_09_url_test_set_password(self):
+    def test_api_users_10_url_test_set_password(self):
         '''
         Тестируем смену пароля для /api/users/set_password/.
         '''
