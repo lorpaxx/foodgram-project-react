@@ -339,10 +339,23 @@ class ResipeEditSerializer(serializers.ModelSerializer):
 
 class ResipeShortListSerializer(serializers.ListSerializer):
     def to_representation(self, data):
-        user = self.context['request'].user
-        print(self.context['request'].query_params)
-        data = data.filter(recipe=user.recipes.all())
-        return super(ResipeShortListSerializer, self).to_representation(data)
+        """
+        List of object instances -> List of dicts of primitive datatypes.
+        """
+        recipes_limit = self.context['request'].query_params.get(
+            'recipes_limit', None)
+        try:
+            recipes_limit = int(recipes_limit)
+        except ValueError:
+            recipes_limit = None
+        except TypeError:
+            recipes_limit = None
+
+        iterable = data.all()[:recipes_limit]
+
+        return [
+            self.child.to_representation(item) for item in iterable
+        ]
 
 
 class ResipeShortSerializer(serializers.ModelSerializer):
@@ -354,7 +367,7 @@ class ResipeShortSerializer(serializers.ModelSerializer):
             'image',
             'cooking_time'
         )
-    list_serializer_class = ResipeShortListSerializer
+        list_serializer_class = ResipeShortListSerializer
 
 
 class UserSubscribeSerializer(serializers.ModelSerializer):

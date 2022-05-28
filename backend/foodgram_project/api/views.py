@@ -156,10 +156,12 @@ class UserViewSet(
 
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = UserSubscribeSerializer(page, many=True)
+            serializer = UserSubscribeSerializer(
+                page, many=True, context={'request': request})
             return self.get_paginated_response(serializer.data)
 
-        serializer = UserSubscribeSerializer(queryset, many=True)
+        serializer = UserSubscribeSerializer(
+            queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
 
