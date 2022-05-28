@@ -39,7 +39,8 @@ def manage_many_to_many_model_with_user(request, *args, **kwargs):
     if request.method == 'POST':
         row, created = many_to_many_model.objects.get_or_create(**params)
         if created:
-            serializer = serializer_class(instance=model_obj)
+            serializer = serializer_class(
+                instance=model_obj, context={'request': request})
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED
