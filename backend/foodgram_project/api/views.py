@@ -191,10 +191,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
+        # partial = kwargs.pop('partial', False)
+        # print(partial)
         instance = self.get_object()
         serializer = ResipeEditSerializer(
-            instance, data=request.data, partial=partial
+            instance, data=request.data, partial=False
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
@@ -243,15 +244,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name='download_shopping_cart',
     )
     def download_shopping_cart(self, request, *args, **kwargs):
-        print(request.query_params)
-        user = request.user
+
+        user: User = request.user
+
         cart = (RecipeIngredientAmount.objects.filter(
             recipe__in_shopping__user=user).
             values(
                 'ingredient__name',
                 'ingredient__measurement_unit__name'
             ).annotate(total=models.Sum('amount')))
-        with open(f'media/{user.username}.csv', 'w', encoding='utf-8') as f:
+        filename = f'media/{user.username}.csv'
+        with open(filename, 'w', encoding='utf-8') as f:
             from csv import writer
             csv_writer = writer(
                 f, delimiter=';', quotechar='"', lineterminator='\n'
@@ -266,7 +269,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                         row["total"]
                     ]
                 )
-        with open(f'media/{user.username}.csv', 'r', encoding='utf-8') as f:
+
+        with open(filename, 'r', encoding='utf-8') as f:
             file_data = f.read()
 
         response = HttpResponse(file_data, content_type='application/csv')
