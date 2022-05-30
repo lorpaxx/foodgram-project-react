@@ -343,10 +343,10 @@ class ResipeShortListSerializer(serializers.ListSerializer):
         List of object instances -> List of dicts of primitive datatypes.
         """
         request = self.context.get('request', None)
+        recipes_limit = None
         if request:
-            recipes_limit = request.query_params.get('recipes_limit', None)
-        else:
-            recipes_limit = None
+            recipes_limit = request.query_params.get('recipes_limit')
+
         try:
             recipes_limit = int(recipes_limit)
         except ValueError:
