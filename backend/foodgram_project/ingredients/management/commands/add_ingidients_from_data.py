@@ -8,9 +8,9 @@ from ingredients.models import Ingredient, MeasurementUnit
 
 class Command(BaseCommand):
     help = 'Копирование данных из csv'
-    shift_path = os.path.dirname(BASE_DIR)
-    shift_path = os.path.dirname(shift_path)
-    shift_path = os.path.join(shift_path, 'data')
+    # shift_path = os.path.dirname(BASE_DIR)
+    # shift_path = os.path.dirname(shift_path)
+    shift_path = os.path.join(BASE_DIR, 'start_data')
 
     def handle(self, *args, **kwargs):
         '''
@@ -30,5 +30,5 @@ class Command(BaseCommand):
                     name=ingrid_data, measurement_unit=unit
                 )
 
-        print(MeasurementUnit.objects.count())
-        print(Ingredient.objects.count())
+        print('ADD', MeasurementUnit.objects.count(), 'MeasurementUnits')
+        print('ADD', Ingredient.objects.count(), 'Ingredients')

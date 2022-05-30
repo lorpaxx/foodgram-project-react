@@ -8,9 +8,9 @@ from tags.models import Tag
 
 class Command(BaseCommand):
     help = 'Копирование данных из csv'
-    shift_path = os.path.dirname(BASE_DIR)
-    shift_path = os.path.dirname(shift_path)
-    shift_path = os.path.join(shift_path, 'data')
+    # shift_path = os.path.dirname(BASE_DIR)
+    # shift_path = os.path.dirname(shift_path)
+    shift_path = os.path.join(BASE_DIR, 'start_data')
 
     def handle(self, *args, **kwargs):
         '''
@@ -28,4 +28,4 @@ class Command(BaseCommand):
                     name=name, color=color, slug=slug
                 )
                 print(tag)
-        print(Tag.objects.count())
+        print('ADD', Tag.objects.count(), 'tags')
