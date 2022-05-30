@@ -18,8 +18,8 @@ class IngredientSerializer(serializers.ModelSerializer):
     Класс IngredientSerializer для модели Ingredient.
     '''
     measurement_unit = serializers.SlugRelatedField(
-            slug_field='name',
-            queryset=MeasurementUnit.objects.all(),
+        slug_field='name',
+        queryset=MeasurementUnit.objects.all(),
     )
 
     class Meta:

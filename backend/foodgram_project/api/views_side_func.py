@@ -32,9 +32,9 @@ def manage_many_to_many_model_with_user(request, *args, **kwargs):
         )
 
     params = {
-            second_model_name: model_obj,
-            'user': user,
-        }
+        second_model_name: model_obj,
+        'user': user,
+    }
 
     if request.method == 'POST':
         row, created = many_to_many_model.objects.get_or_create(**params)

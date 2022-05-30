@@ -174,7 +174,7 @@ class SubscribesTest(APITestCase):
 
         resp = self.auth_client1.post(url)
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(SubscribeUser.objects.count(), count_subscrybe+1)
+        self.assertEqual(SubscribeUser.objects.count(), count_subscrybe + 1)
 
         try:
             resp_data: dict = resp.json()
@@ -202,7 +202,7 @@ class SubscribesTest(APITestCase):
 
         resp = self.auth_client1.post(url)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(SubscribeUser.objects.count(), count_subscrybe+1)
+        self.assertEqual(SubscribeUser.objects.count(), count_subscrybe + 1)
 
         count_subscrybe = SubscribeUser.objects.count()
 
@@ -216,4 +216,4 @@ class SubscribesTest(APITestCase):
 
         resp = self.auth_client1.delete(url)
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(SubscribeUser.objects.count(), count_subscrybe-1)
+        self.assertEqual(SubscribeUser.objects.count(), count_subscrybe - 1)

@@ -5,6 +5,7 @@ import tempfile
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
+
 from ingredients.models import Ingredient, MeasurementUnit
 from recipes.models import (Recipe, RecipeIngredientAmount, RecipeTag,
                             UserShoppingCart)
@@ -163,7 +164,7 @@ class ShoppingTest(APITestCase):
 
         resp = self.auth_client1.post(url)
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(UserShoppingCart.objects.count(), count_shopping+1)
+        self.assertEqual(UserShoppingCart.objects.count(), count_shopping + 1)
 
         try:
             resp_data: dict = resp.json()
@@ -187,7 +188,7 @@ class ShoppingTest(APITestCase):
 
         resp = self.auth_client1.post(url)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(UserShoppingCart.objects.count(), count_shopping+1)
+        self.assertEqual(UserShoppingCart.objects.count(), count_shopping + 1)
 
         url = '/api/recipes/?is_in_shopping_cart=1'
         resp = self.auth_client1.get(url)
@@ -208,7 +209,7 @@ class ShoppingTest(APITestCase):
 
         resp = self.auth_client1.delete(url)
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(UserShoppingCart.objects.count(), count_shopping-1)
+        self.assertEqual(UserShoppingCart.objects.count(), count_shopping - 1)
 
         url = '/api/recipes/?is_in_shopping_cart=1'
         resp = self.auth_client1.get(url)

@@ -1,4 +1,3 @@
-
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -224,13 +223,13 @@ class UsersTests(APITestCase):
                     )
                 user = users[row.get('id')]
                 fields_name = {
-                        'id': user.id,
-                        'email': user.email,
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
-                        'username': user.username,
-                        'is_subscribed': False,
-                    }
+                    'id': user.id,
+                    'email': user.email,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'username': user.username,
+                    'is_subscribed': False,
+                }
                 for field in fields_name:
                     self.assertEqual(
                         row[field], fields_name[field],

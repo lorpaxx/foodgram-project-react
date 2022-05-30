@@ -249,12 +249,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         user: User = request.user
 
-        cart = (RecipeIngredientAmount.objects.filter(
-            recipe__in_shopping__user=user).
-            values(
+        cart = (
+            RecipeIngredientAmount.objects.filter(
+                recipe__in_shopping__user=user
+            ).values(
                 'ingredient__name',
                 'ingredient__measurement_unit__name'
-            ).annotate(total=models.Sum('amount')))
+            ).annotate(total=models.Sum('amount'))
+        )
         filename = f'media/{user.username}.csv'
         with open(filename, 'w', encoding='utf-8') as f:
             from csv import writer

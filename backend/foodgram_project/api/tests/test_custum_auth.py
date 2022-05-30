@@ -49,7 +49,7 @@ class CustumAuthTest(APITestCase):
         self.assertEqual(
             resp.status_code, status.HTTP_201_CREATED,
             f'POST на {url} выдаёт неожидаеёмый статус код'
-            )
+        )
 
         try:
             resp_data: dict = resp.json()

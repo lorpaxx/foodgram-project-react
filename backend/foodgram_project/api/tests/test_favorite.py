@@ -5,6 +5,7 @@ import tempfile
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
+
 from ingredients.models import Ingredient, MeasurementUnit
 from recipes.models import (Recipe, RecipeIngredientAmount, RecipeTag,
                             UserFavoriteRecipe)
@@ -163,7 +164,8 @@ class FavoriteTest(APITestCase):
 
         resp = self.auth_client1.post(url)
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(UserFavoriteRecipe.objects.count(), count_favorite+1)
+        self.assertEqual(
+            UserFavoriteRecipe.objects.count(), count_favorite + 1)
 
         try:
             resp_data: dict = resp.json()
@@ -187,7 +189,8 @@ class FavoriteTest(APITestCase):
 
         resp = self.auth_client1.post(url)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(UserFavoriteRecipe.objects.count(), count_favorite+1)
+        self.assertEqual(
+            UserFavoriteRecipe.objects.count(), count_favorite + 1)
 
         url = '/api/recipes/?is_favorited=1'
         resp = self.auth_client1.get(url)
@@ -208,7 +211,8 @@ class FavoriteTest(APITestCase):
 
         resp = self.auth_client1.delete(url)
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(UserFavoriteRecipe.objects.count(), count_favorite-1)
+        self.assertEqual(
+            UserFavoriteRecipe.objects.count(), count_favorite - 1)
 
         url = '/api/recipes/?is_favorited=1'
         resp = self.auth_client1.get(url)
