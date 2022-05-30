@@ -134,4 +134,5 @@ dmypy.json
 .vscode/
 media/
 static/
-
+nginx_example
+compose_example
