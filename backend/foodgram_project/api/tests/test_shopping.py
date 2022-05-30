@@ -154,7 +154,7 @@ class ShoppingTest(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(resp.json().get('count'), 0)
 
-        recipe = Recipe.objects.get(pk=1)
+        recipe = ShoppingTest.recipe
         url = f'/api/recipes/{recipe.id}/shopping_cart/'
         count_shopping = UserShoppingCart.objects.count()
 
@@ -195,7 +195,7 @@ class ShoppingTest(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(resp.json().get('count'), 1)
 
-        recipe = Recipe.objects.get(pk=1)
+        recipe = ShoppingTest.recipe
         url = f'/api/recipes/{recipe.id}/shopping_cart/'
         count_shopping = UserShoppingCart.objects.count()
 
@@ -220,8 +220,8 @@ class ShoppingTest(APITestCase):
         '''
         Проверяем возможность скачать список покупок.
         '''
-        recipe = Recipe.objects.get(pk=1)
-        recipe2 = Recipe.objects.get(pk=2)
+        recipe = ShoppingTest.recipe
+        recipe2 = ShoppingTest.recipe2
 
         user = User.objects.get(username='usertest2')
 

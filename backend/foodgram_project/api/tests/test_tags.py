@@ -13,12 +13,12 @@ class TagsTests(APITestCase):
         Создаём 5 экземпляров модели Tag.
         '''
         super().setUpClass()
-        for i in range(3):
-            Tag.objects.create(
-                name=f'Tag_{i}',
-                slug=f'Tag_{i}',
-                color=f'#11111{i}',
-            )
+        cls.tag1 = Tag.objects.create(
+            name='Tag_1', slug='Tag_1', color='#111111')
+        cls.tag2 = Tag.objects.create(
+            name='Tag_2', slug='Tag_2', color='#111112')
+        cls.tag3 = Tag.objects.create(
+            name='Tag_3', slug='Tag_3', color='#111113')         
 
     def setUp(self):
         '''
@@ -40,28 +40,20 @@ class TagsTests(APITestCase):
         '''
         Проверяем /api/tags/ доступность одного элемента.
         '''
-        url = '/api/tags/1/'
+        tag = TagsTests.tag1
+        url = f'/api/tags/{tag.id}/'
         resp = self.client.get(url)
         self.assertEqual(
             resp.status_code, status.HTTP_200_OK,
         )
 
-    def test_api_tags_03_url_retrieve_not_exist(self):
-        '''
-        Проверяем /api/tags/ недоступность несуществующего элемента.
-        '''
-        url = '/api/tags/6/'
-        resp = self.client.get(url)
-        self.assertEqual(
-            resp.status_code, status.HTTP_404_NOT_FOUND,
-        )
-
     def test_api_tags_04_retrieve_correct_fields(self):
         '''
-        Проверяем /api/tags/2/ корректность получаемых данных.
+        Проверяем /api/tags/{id}/ корректность получаемых данных.
         '''
-        url = '/api/tags/2/'
-        tag: Tag = Tag.objects.get(pk=2)
+        tag = TagsTests.tag1
+        url = f'/api/tags/{tag.id}/'
+
         resp = self.client.get(url)
         try:
             resp_data: dict = resp.json()
@@ -71,7 +63,7 @@ class TagsTests(APITestCase):
                 msg=f'responce data is not json: {err}'
             )
         fields_name = {
-            'id': 2,
+            'id': tag.id,
             'name': tag.name,
             'slug': tag.slug,
             'color': tag.color,

@@ -71,9 +71,9 @@ class UsersTests(APITestCase):
         '''
         urls = [
             UsersTests.url,
-            UsersTests.url + '1/',
-            UsersTests.url + '2/',
-            UsersTests.url + '3/',
+            UsersTests.url + f'{UsersTests.user1.id}/',
+            UsersTests.url + f'{UsersTests.user2.id}/',
+            UsersTests.url + f'{UsersTests.author.id}/',
         ]
 
         for url in urls:
@@ -120,8 +120,8 @@ class UsersTests(APITestCase):
         '''
         Тестируем '/api/users/{id}/.
         '''
-        url = UsersTests.url + '2/'
         user: User = UsersTests.user2
+        url = UsersTests.url + f'{user.id}/'
         resp = self.client.get(url)
         try:
             resp_data: dict = resp.json()
@@ -131,7 +131,7 @@ class UsersTests(APITestCase):
                 msg=f'responce data is not json: {err}'
             )
         fields_name = {
-            'id': 2,
+            'id': user.id,
             'email': user.email,
             'first_name': user.first_name,
             'last_name': user.last_name,
@@ -195,9 +195,9 @@ class UsersTests(APITestCase):
             len(result), 3, 'В result неожиданное число пользователей')
 
         users = {
-            1: UsersTests.user1,
-            2: UsersTests.user2,
-            3: UsersTests.author
+            UsersTests.user1.id: UsersTests.user1,
+            UsersTests.user2.id: UsersTests.user2,
+            UsersTests.author.id: UsersTests.author
         }
         for row in result:
             with self.subTest(row=row):

@@ -523,9 +523,9 @@ class RecipesTest(APITestCase):
         )
         recipe_data = {
             'ingredients': [
-                {'id': 4, 'amount': 1},
+                {'id': 10000, 'amount': 1},
             ],
-            'tags': [1, 2],
+            'tags': [RecipesTest.tag1.id, RecipesTest.tag2.id],
             'image': image_data,
             'name': 'ТестРецепт1',
             'text': 'Текст ТестРецепта',
