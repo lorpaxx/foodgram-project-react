@@ -33,6 +33,7 @@ services:
 
   nginx:
     image: nginx:1.19.3
+    # image: nginx:1.21.3-alpine
     ports:
       - "80:80"
     volumes:
@@ -41,6 +42,9 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
+    depends_on:
+      - web
+      - frontend
   # nginx:
   #   image: nginx:1.19.3
   #   ports:

@@ -186,7 +186,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        output_serializer = ResipeSerializer(serializer.instance)
+        output_serializer = ResipeSerializer(
+            serializer.instance,context={'request': request})
         return Response(
             output_serializer.data,
             status=status.HTTP_201_CREATED,
