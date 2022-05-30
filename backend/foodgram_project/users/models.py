@@ -55,8 +55,8 @@ class SubscribeUser(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
+        verbose_name = 'Подписка пользователя'
+        verbose_name_plural = 'Подписки пользователя'
         constraints = (
             models.UniqueConstraint(
                 fields=('user', 'author'),

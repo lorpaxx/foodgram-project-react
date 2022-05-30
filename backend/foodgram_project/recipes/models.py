@@ -8,7 +8,7 @@ User = get_user_model()
 
 class Recipe(models.Model):
     '''
-    Класс для описания рецептов.
+    Класс Recipe для описания рецептов.
     '''
     author = models.ForeignKey(
         User,
@@ -143,6 +143,9 @@ class RecipeIngredientAmount(models.Model):
 
 
 class UserFavoriteRecipe(models.Model):
+    '''
+    Класс UserFavoriteRecipe.
+    '''
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -174,6 +177,9 @@ class UserFavoriteRecipe(models.Model):
 
 
 class UserShoppingCart(models.Model):
+    '''
+    Класс UserShoppingCart.
+    '''
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

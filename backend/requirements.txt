@@ -6,3 +6,8 @@ django-extra-fields==3.0.2
 Pillow==9.1.1
 psycopg2-binary==2.9.3
 django-filter==21.1
+<<<<<<< HEAD
+=======
+python-dotenv==0.20.0
+gunicorn==20.0.4
+>>>>>>> 7a3e6565e2fbeaa63027e1f8515b703c2e4fa61a
