@@ -3,6 +3,9 @@ from ingredients.models import Ingredient, MeasurementUnit
 
 
 class MeasurementUnitAdmin(admin.ModelAdmin):
+    '''
+    Класс MeasurementUnitAdmin.
+    '''
     list_display = (
         'pk',
         'name',
@@ -12,10 +15,12 @@ class MeasurementUnitAdmin(admin.ModelAdmin):
 
 
 class IngredientAdmin(admin.ModelAdmin):
+    '''Класс IngredientAdmin.'''
     list_display = (
         'pk',
         'name',
-        'measurement_unit')
+        'measurement_unit'
+    )
     list_editable = ('name', 'measurement_unit')
     search_fields = ('name',)
     list_filter = ('measurement_unit', )

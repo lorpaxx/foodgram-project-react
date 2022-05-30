@@ -3,6 +3,9 @@ from tags.models import Tag
 
 
 class TagAdmin(admin.ModelAdmin):
+    '''
+    Класс TagAdmin.
+    '''
     list_display = (
         'pk',
         'name',
