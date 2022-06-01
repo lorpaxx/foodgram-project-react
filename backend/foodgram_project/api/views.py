@@ -373,7 +373,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         response = HttpResponse(content_type='text/csv')
         csv_writer = writer(
-                response, delimiter=';', quotechar='"', lineterminator='\n'
+            response, delimiter=';', quotechar='"', lineterminator='\n'
         )
         csv_headers = ('Ингредиент', 'Размерность', 'Количество')
         csv_writer.writerow(csv_headers)
