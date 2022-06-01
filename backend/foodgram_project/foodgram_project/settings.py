@@ -161,3 +161,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'UPLOADED_FILES_USE_URL': True,
 }
+
+PROJECT_SETTINGS = {
+    'recipes_min_cooking_time': 1,
+    'ingredient_min_amount': 1,
+}

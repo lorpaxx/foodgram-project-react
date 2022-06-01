@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
+from foodgram_project.settings import PROJECT_SETTINGS
 from ingredients.models import Ingredient
 from tags.models import Tag
 
@@ -26,9 +28,14 @@ class Recipe(models.Model):
         verbose_name='Описание',
         help_text='Описание',
     )
-    cooking_time = models.IntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления (в минутах)',
         help_text='Время приготовления (в минутах)',
+        validators=(
+            MinValueValidator(
+                limit_value=PROJECT_SETTINGS.get('recipes_min_cooking_time', 1)
+            ),
+        )
     )
     image = models.ImageField(
         'Картинка',
@@ -51,12 +58,12 @@ class Recipe(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         ordering = ('name',)
-        constraints = (
-            models.CheckConstraint(
-                check=models.Q(cooking_time__gt=0),
-                name='cooking_time_gt_zero'
-            ),
-        )
+        # constraints = (
+        #     models.CheckConstraint(
+        #         check=models.Q(cooking_time__gt=0),
+        #         name='cooking_time_gt_zero'
+        #     ),
+        # )
 
     def __str__(self) -> str:
         return f'Рецепт: {self.name} пользователя {self.author}'
@@ -116,9 +123,14 @@ class RecipeIngredientAmount(models.Model):
         verbose_name='Ингридиент',
         help_text='Ингридиент',
     )
-    amount = models.IntegerField(
+    amount = models.PositiveSmallIntegerField(
         verbose_name='Количество',
         help_text='Количество',
+        validators=(
+            MinValueValidator(
+                limit_value=PROJECT_SETTINGS.get('ingredient_min_amount', 1)
+            ),
+        )
     )
 
     class Meta:
@@ -129,10 +141,10 @@ class RecipeIngredientAmount(models.Model):
                 fields=('recipe', 'ingredient'),
                 name='unigue_ingredient_for_recipe'
             ),
-            models.CheckConstraint(
-                check=models.Q(amount__gt=0),
-                name='amount_gt_zero'
-            )
+            # models.CheckConstraint(
+            #     check=models.Q(amount__gt=0),
+            #     name='amount_gt_zero'
+            # )
         )
 
     def __str__(self) -> str:
