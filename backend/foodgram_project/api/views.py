@@ -254,7 +254,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 'ingredient__measurement_unit__name'
             ).annotate(total=models.Sum('amount'))
         )
-        response = HttpResponse(content_type='application/csv')
+        response = HttpResponse(content_type='text/csv')
         csv_writer = writer(
                 response, delimiter=';', quotechar='"', lineterminator='\n'
             )
@@ -267,28 +267,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 ]
             )
         response['Content-Disposition'] = (
-            f'attachment; filename="{user.username}.csv"'
+            f'attachment;filename="{user.username}.csv"'
         )
-        # filename = f'media/{user.username}.csv'
-        # with open(filename, 'w', encoding='utf-8') as f:
-        #     from csv import writer
-        #     
-        #     head_row = ['ingredient', 'measurement_unit', 'total']
-        #     csv_writer.writerow(head_row)
-        #     for row in cart:
-        #         csv_writer.writerow(
-        #             [
-        #                 row["ingredient__name"],
-        #                 row["ingredient__measurement_unit__name"],
-        #                 row["total"]
-        #             ]
-        #         )
-
-        # with open(filename, 'r', encoding='utf-8') as f:
-        #     file_data = f.read()
-
-        # response = HttpResponse(file_data, content_type='application/csv')
-        # response['Content-Disposition'] = (
-        #     f'attachment; filename="{user.username}.csv"'
-        # )
         return response
