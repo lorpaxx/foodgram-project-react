@@ -85,6 +85,9 @@ class UserViewSet(
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin
 ):
+    '''
+    Класс UserViewSet для модели User.
+    '''
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = PageNumberCustomPaginator
@@ -209,6 +212,9 @@ class UserViewSet(
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    '''
+    Класс RecipeViewSet для модели Recipes.
+    '''
     queryset = Recipe.objects.all()
     serializer_class = ResipeSerializer
     permission_classes = (AuthorOrReadOnly,)
