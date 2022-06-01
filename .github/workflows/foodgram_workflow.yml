@@ -18,6 +18,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pep8-naming flake8-broken-line flake8-return
           pip install -r ./backend/foodgram_project/requirements.txt
+          cd ./backend/foodgram_project/
       
       - name: Test with flake8 and pytest
         run: | 
@@ -25,5 +26,4 @@ jobs:
       
       - name: Test with unittest
         run: | 
-          cd ./backend/foodgram_project/
           python manage.py test
