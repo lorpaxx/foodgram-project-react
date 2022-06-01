@@ -1,3 +1,5 @@
+from csv import writer
+
 from api.filters import IngredientFilter, RecipeFilter
 from api.paginators import PageNumberCustomPaginator
 from api.permissions import AuthorOrReadOnly
@@ -45,7 +47,7 @@ def get_token(request):
 def drop_token(request):
     user: User = request.user
     if user.is_authenticated:
-        token = Token.objects.get(user=user)
+        token = get_object_or_404(Token, user=user)
         token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(
@@ -175,10 +177,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filterset_class = RecipeFilter
     pagination_class = PageNumberCustomPaginator
 
-    # def get_queryset(self):
-    #     print(self.request.query_params)
-    #     return super().get_queryset()
-
     def create(self, request, *args, **kwargs):
         serializer = ResipeEditSerializer(
             data=request.data,
@@ -194,8 +192,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        # partial = kwargs.pop('partial', False)
-        # print(partial)
         instance = self.get_object()
         serializer = ResipeEditSerializer(
             instance, data=request.data, partial=False
@@ -258,28 +254,41 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 'ingredient__measurement_unit__name'
             ).annotate(total=models.Sum('amount'))
         )
-        filename = f'media/{user.username}.csv'
-        with open(filename, 'w', encoding='utf-8') as f:
-            from csv import writer
-            csv_writer = writer(
-                f, delimiter=';', quotechar='"', lineterminator='\n'
+        response = HttpResponse(content_type='application/csv')
+        csv_writer = writer(
+                response, delimiter=';', quotechar='"', lineterminator='\n'
             )
-            head_row = ['ingredient', 'measurement_unit', 'total']
-            csv_writer.writerow(head_row)
-            for row in cart:
-                csv_writer.writerow(
-                    [
-                        row["ingredient__name"],
-                        row["ingredient__measurement_unit__name"],
-                        row["total"]
-                    ]
-                )
-
-        with open(filename, 'r', encoding='utf-8') as f:
-            file_data = f.read()
-
-        response = HttpResponse(file_data, content_type='application/csv')
+        for row in cart:
+            csv_writer.writerow(
+                [
+                    row['ingredient__name'],
+                    row['ingredient__measurement_unit__name'],
+                    row['total']
+                ]
+            )
         response['Content-Disposition'] = (
             f'attachment; filename="{user.username}.csv"'
         )
+        # filename = f'media/{user.username}.csv'
+        # with open(filename, 'w', encoding='utf-8') as f:
+        #     from csv import writer
+        #     
+        #     head_row = ['ingredient', 'measurement_unit', 'total']
+        #     csv_writer.writerow(head_row)
+        #     for row in cart:
+        #         csv_writer.writerow(
+        #             [
+        #                 row["ingredient__name"],
+        #                 row["ingredient__measurement_unit__name"],
+        #                 row["total"]
+        #             ]
+        #         )
+
+        # with open(filename, 'r', encoding='utf-8') as f:
+        #     file_data = f.read()
+
+        # response = HttpResponse(file_data, content_type='application/csv')
+        # response['Content-Disposition'] = (
+        #     f'attachment; filename="{user.username}.csv"'
+        # )
         return response
