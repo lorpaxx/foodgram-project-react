@@ -18,7 +18,7 @@ class TagsTests(APITestCase):
         cls.tag2 = Tag.objects.create(
             name='Tag_2', slug='Tag_2', color='#111112')
         cls.tag3 = Tag.objects.create(
-            name='Tag_3', slug='Tag_3', color='#111113')         
+            name='Tag_3', slug='Tag_3', color='#111113')
 
     def setUp(self):
         '''
