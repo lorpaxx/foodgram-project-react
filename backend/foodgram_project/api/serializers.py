@@ -2,13 +2,16 @@ from re import match
 
 from django.contrib.auth import get_user_model, password_validation
 from django.core import exceptions
+from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
 from ingredients.models import Ingredient, MeasurementUnit
 from recipes.models import (Recipe, RecipeIngredientAmount, RecipeTag,
                             UserFavoriteRecipe, UserShoppingCart)
 from rest_framework import serializers
+from foodgram_project.settings import PROJECT_SETTINGS
 from tags.models import Tag
 from users.models import SubscribeUser
+
 
 User = get_user_model()
 
@@ -113,6 +116,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         pattern = r'^[\w.@+-]+\Z'
+        pattern = PROJECT_SETTINGS.get(
+            'users_validate_patter_username', r'^[\w.@+-]+\Z')
         if match(pattern, value):
             return value
 
@@ -236,10 +241,11 @@ class AmountSerialazer(serializers.Serializer):
     amount = serializers.IntegerField(required=True)
 
     def validate_amount(self, value):
-        if value > 0:
+        min_value = PROJECT_SETTINGS.get('ingredient_min_amount', 1)
+        if value >= min_value:
             return value
         raise serializers.ValidationError(
-            'amount mast be > 0!!'
+            f'amount mast be >= {min_value}!!'
         )
 
 
@@ -267,10 +273,11 @@ class ResipeEditSerializer(serializers.ModelSerializer):
         )
 
     def validate_cooking_time(self, value):
-        if value > 0:
+        min_value = PROJECT_SETTINGS.get('recipes_min_cooking_time', 1)
+        if value > min_value:
             return value
         raise serializers.ValidationError(
-            'cooking_time mast be > 0!!'
+            f'cooking_time mast be > {min_value}!!'
         )
 
     def validate_ingredients(self, values):
@@ -297,6 +304,7 @@ class ResipeEditSerializer(serializers.ModelSerializer):
                 )
         return values
 
+    @transaction.atomic
     def create(self, validated_data):
         user = self.context.get('user')
         ingredients = validated_data.pop('ingredients')
@@ -312,13 +320,11 @@ class ResipeEditSerializer(serializers.ModelSerializer):
             )
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
-
         recipe: Recipe = instance
-
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
-
         for key, value in validated_data.items():
             setattr(recipe, key, value)
         recipe.save()

@@ -3,7 +3,9 @@ from tags.models import Tag
 
 
 class IngredientFilter(FilterSet):
-
+    '''
+    Класс IngredientFilter.
+    '''
     name = rest_framework.CharFilter(
         field_name='name',
         lookup_expr='startswith'
