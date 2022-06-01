@@ -8,7 +8,7 @@ class IngredientFilter(FilterSet):
     '''
     name = rest_framework.CharFilter(
         field_name='name',
-        lookup_expr='startswith'
+        lookup_expr='istartswith'
     )
 
 

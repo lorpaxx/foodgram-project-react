@@ -9,7 +9,7 @@ from api.serializers import (GetTokenSerializer, IngredientSerializer,
                              UserChangePasswordSerializer,
                              UserCreateSerializer, UserSerializer,
                              UserSubscribeSerializer)
-from api.views_side_func import manage_many_to_many_model_with_user
+# from api.views_side_func import manage_many_to_many_model_with_user
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.http import HttpResponse
@@ -107,7 +107,7 @@ class UserViewSet(
         url_name='me'
     )
     def me(self, request, *args, **kwargs):
-        user = self.request.user
+        user = request.user
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
@@ -119,7 +119,7 @@ class UserViewSet(
         url_name='set_password'
     )
     def set_new_password(self, request, *args, **kwargs):
-        user = self.request.user
+        user = request.user
         serializer = UserChangePasswordSerializer(
             data=request.data,
             context={'user': user}
@@ -137,12 +137,52 @@ class UserViewSet(
         url_name='subscribe'
     )
     def manage_subscribe(self, request, *args, **kwargs):
-        return manage_many_to_many_model_with_user(
-            request, *args, **kwargs,
-            second_model=User,
-            second_model_name='author',
-            serializer_class=UserSubscribeSerializer,
-            many_to_many_model=SubscribeUser
+        '''
+        Управление подписками.
+        '''
+        user = request.user
+        author_id = kwargs.get('pk', 0)
+
+        if not User.objects.filter(id=author_id).exists():
+            text = f'Author with id={author_id} does not exists'
+            return Response(
+                {'errors': text},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        author = User.objects.get(id=author_id)
+        params = {
+            'author': author,
+            'user': user,
+        }
+
+        if request.method == 'POST':
+            if author == user:
+                return Response(
+                    {'errors': 'can not subscribe to yourself'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            obj, created = SubscribeUser.objects.get_or_create(**params)
+            if created:
+                serializer = UserSubscribeSerializer(
+                    instance=author, context={'request': request})
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_201_CREATED
+                )
+            return Response(
+                {'errors': 'The recipe is already add'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if SubscribeUser.objects.filter(**params).exists():
+            obj = SubscribeUser.objects.get(**params)
+            obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+            {'errors': 'The author is not add'},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @decorators.action(
@@ -211,12 +251,47 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name='favorite',
     )
     def manage_favorite(self, request, *args, **kwargs):
-        return manage_many_to_many_model_with_user(
-            request, *args, **kwargs,
-            second_model=Recipe,
-            second_model_name='recipe',
-            serializer_class=ResipeShortSerializer,
-            many_to_many_model=UserFavoriteRecipe,
+        '''
+        Управление списком избранного.
+        '''
+        user = request.user
+        recipe_id = kwargs.get('pk', 0)
+
+        if not Recipe.objects.filter(id=recipe_id).exists():
+            text = f'Recipe with id={recipe_id} does not exists'
+            return Response(
+                {'errors': text},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        recipe = Recipe.objects.get(id=recipe_id)
+        params = {
+            'recipe': recipe,
+            'user': user,
+        }
+
+        if request.method == 'POST':
+            obj, created = UserFavoriteRecipe.objects.get_or_create(**params)
+            if created:
+                serializer = ResipeShortSerializer(
+                    instance=recipe, context={'request': request})
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_201_CREATED
+                )
+            return Response(
+                {'errors': 'The recipe is already add'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if UserFavoriteRecipe.objects.filter(**params).exists():
+            obj = UserFavoriteRecipe.objects.get(**params)
+            obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+            {'errors': 'The recipe is not add'},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @decorators.action(
@@ -226,13 +301,48 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_path='shopping_cart',
         url_name='shopping_cart',
     )
-    def manager_sopping_cart(self, request, *args, **kwargs):
-        return manage_many_to_many_model_with_user(
-            request, *args, **kwargs,
-            second_model=Recipe,
-            second_model_name='recipe',
-            serializer_class=ResipeShortSerializer,
-            many_to_many_model=UserShoppingCart
+    def manage_shopping_cart(self, request, *args, **kwargs):
+        '''
+        Управление списком покупок.
+        '''
+        user = request.user
+        recipe_id = kwargs.get('pk', 0)
+
+        if not Recipe.objects.filter(id=recipe_id).exists():
+            text = f'Recipe with id={recipe_id} does not exists'
+            return Response(
+                {'errors': text},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        recipe = Recipe.objects.get(id=recipe_id)
+        params = {
+            'recipe': recipe,
+            'user': user,
+        }
+
+        if request.method == 'POST':
+            obj, created = UserShoppingCart.objects.get_or_create(**params)
+            if created:
+                serializer = ResipeShortSerializer(
+                    instance=recipe, context={'request': request})
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_201_CREATED
+                )
+            return Response(
+                {'errors': 'The recipe is already add'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if UserShoppingCart.objects.filter(**params).exists():
+            obj = UserShoppingCart.objects.get(**params)
+            obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+            {'errors': 'The recipe is not add'},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @decorators.action(
