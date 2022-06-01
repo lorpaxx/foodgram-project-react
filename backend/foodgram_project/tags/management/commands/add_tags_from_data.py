@@ -2,14 +2,13 @@ import csv
 import os
 
 from django.core.management.base import BaseCommand
+
 from foodgram_project.settings import BASE_DIR
 from tags.models import Tag
 
 
 class Command(BaseCommand):
     help = 'Копирование данных из csv'
-    # shift_path = os.path.dirname(BASE_DIR)
-    # shift_path = os.path.dirname(shift_path)
     shift_path = os.path.join(BASE_DIR, 'start_data')
 
     def handle(self, *args, **kwargs):

@@ -1,5 +1,15 @@
 from csv import writer
 
+from django.contrib.auth import get_user_model
+from django.db import models
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+
+from rest_framework import decorators, mixins, permissions, status, viewsets
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+
 from api.filters import IngredientFilter, RecipeFilter
 from api.paginators import PageNumberCustomPaginator
 from api.permissions import AuthorOrReadOnly
@@ -9,18 +19,9 @@ from api.serializers import (GetTokenSerializer, IngredientSerializer,
                              UserChangePasswordSerializer,
                              UserCreateSerializer, UserSerializer,
                              UserSubscribeSerializer)
-# from api.views_side_func import manage_many_to_many_model_with_user
-from django.contrib.auth import get_user_model
-from django.db import models
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
 from ingredients.models import Ingredient
 from recipes.models import (Recipe, RecipeIngredientAmount, UserFavoriteRecipe,
                             UserShoppingCart)
-from rest_framework import decorators, mixins, permissions, status, viewsets
-from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
 from tags.models import Tag
 from users.models import SubscribeUser
 

@@ -19,10 +19,10 @@ class RecipeFilter(FilterSet):
     author = rest_framework.CharFilter(
         field_name='author__id',
     )
-    is_favorited = rest_framework.CharFilter(method='get_is_favorited_filter')
+    is_favorited = rest_framework.CharFilter(method='get_favorited_filter')
 
     is_in_shopping_cart = rest_framework.CharFilter(
-        method='get_is_in_shopping_cart_filter'
+        method='get_in_shopping_cart_filter'
     )
 
     tags = rest_framework.ModelMultipleChoiceFilter(
@@ -32,7 +32,7 @@ class RecipeFilter(FilterSet):
         conjoined=True,
     )
 
-    def get_is_favorited_filter(self, queryset, name, value):
+    def get_favorited_filter(self, queryset, name, value):
         '''
         Возвращает отфильтрованный queryset модели Recipe,
         элементы которых есть в UserFavoriteRecipe.
@@ -45,7 +45,7 @@ class RecipeFilter(FilterSet):
                 return queryset.exclude(in_favorite__user=user)
         return queryset
 
-    def get_is_in_shopping_cart_filter(self, queryset, name, value):
+    def get_in_shopping_cart_filter(self, queryset, name, value):
         '''
         Возвращает отфильтрованный queryset модели Recipe,
         элементы которых есть в UserShoppingCart.

@@ -4,14 +4,14 @@ from django.contrib.auth import get_user_model, password_validation
 from django.core import exceptions
 from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
+
+from foodgram_project.settings import PROJECT_SETTINGS
 from ingredients.models import Ingredient, MeasurementUnit
 from recipes.models import (Recipe, RecipeIngredientAmount, RecipeTag,
                             UserFavoriteRecipe, UserShoppingCart)
-from rest_framework import serializers
-from foodgram_project.settings import PROJECT_SETTINGS
 from tags.models import Tag
 from users.models import SubscribeUser
-
 
 User = get_user_model()
 
@@ -115,7 +115,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_username(self, value):
-        pattern = r'^[\w.@+-]+\Z'
         pattern = PROJECT_SETTINGS.get(
             'users_validate_patter_username', r'^[\w.@+-]+\Z')
         if match(pattern, value):
@@ -274,10 +273,10 @@ class ResipeEditSerializer(serializers.ModelSerializer):
 
     def validate_cooking_time(self, value):
         min_value = PROJECT_SETTINGS.get('recipes_min_cooking_time', 1)
-        if value > min_value:
+        if value >= min_value:
             return value
         raise serializers.ValidationError(
-            f'cooking_time mast be > {min_value}!!'
+            f'cooking_time mast be >= {min_value}!!'
         )
 
     def validate_ingredients(self, values):
