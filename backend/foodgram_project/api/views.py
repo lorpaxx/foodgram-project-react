@@ -258,6 +258,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         csv_writer = writer(
                 response, delimiter=';', quotechar='"', lineterminator='\n'
             )
+        csv_headers = ('Ингредиент', 'Размерность', 'Количество')
+        csv_writer.writerow(csv_headers)
         for row in cart:
             csv_writer.writerow(
                 [
