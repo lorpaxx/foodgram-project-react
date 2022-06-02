@@ -8,8 +8,9 @@ jobs:
       postgres:
         image: postgres:10
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres_123
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: Test_user_123
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -39,11 +40,13 @@ jobs:
       
       - name: Test with unittest
         env:
-          DB_NAME: postgres
+          DB_ENGINE: django.db.backends.postgresql
+          DB_NAME: test_db
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
-          DB_PASSWORD: postgres_123
-          DB_USER: postgres
+          DB_PASSWORD: Test_user_123
+          DB_USER: test_user
+          SECRET_KEY: 5dc554e7-eaf4-42b9-9536-796687ec3019
         run: |
           cd backend/foodgram_project/
           python manage.py test
