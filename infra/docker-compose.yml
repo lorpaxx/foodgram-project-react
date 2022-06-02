@@ -10,9 +10,10 @@ services:
       - ./.env
 
   web:
-    build: 
-      context: ../backend/foodgram_project
-      dockerfile: Dockerfile
+    # build: 
+    #   context: ../backend/foodgram_project
+    #   dockerfile: Dockerfile
+    image: lorpaxx/foodgram_backend:latest
     restart: always
     volumes:
       - static_value:/app/static/
