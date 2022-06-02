@@ -58,12 +58,6 @@ class Recipe(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         ordering = ('name',)
-        # constraints = (
-        #     models.CheckConstraint(
-        #         check=models.Q(cooking_time__gt=0),
-        #         name='cooking_time_gt_zero'
-        #     ),
-        # )
 
     def __str__(self) -> str:
         return f'Рецепт: {self.name} пользователя {self.author}'

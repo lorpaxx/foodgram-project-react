@@ -107,6 +107,7 @@ jobs:
           cd infra
           sudo docker-compose stop
           sudo docker-compose rm web
+          sudo docker image rm lorpaxx/foodgram_backend
           rm .env
           touch .env
           echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env

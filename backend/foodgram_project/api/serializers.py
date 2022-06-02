@@ -244,7 +244,7 @@ class AmountSerialazer(serializers.Serializer):
         if value >= min_value:
             return value
         raise serializers.ValidationError(
-            f'amount mast be >= {min_value}!!'
+            f'amount must be >= {min_value}!!'
         )
 
 
@@ -276,7 +276,7 @@ class ResipeEditSerializer(serializers.ModelSerializer):
         if value >= min_value:
             return value
         raise serializers.ValidationError(
-            f'cooking_time mast be >= {min_value}!!'
+            f'cooking_time must be >= {min_value}!!'
         )
 
     def validate_ingredients(self, values):
