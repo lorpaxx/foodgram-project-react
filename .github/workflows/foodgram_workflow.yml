@@ -103,7 +103,8 @@ jobs:
         key: ${{ secrets.HOST_SSH_KEY }}
         passphrase: ${{ secrets.HOST_PASSPHRASE }}
         script: |
-          cd foodgram
+          cd foodgram-project-react
+          cd infra
           sudo docker-compose stop
           sudo docker-compose rm web
           rm .env
