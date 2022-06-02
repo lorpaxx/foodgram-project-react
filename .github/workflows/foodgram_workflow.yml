@@ -4,6 +4,19 @@ on: [push]
 
 jobs:
   tests:
+    services:
+      postgres:
+        image: postgres:10
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_123
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -25,6 +38,12 @@ jobs:
           python -m flake8
       
       - name: Test with unittest
+        env:
+          DB_NAME: postgres
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_PASSWORD: postgres_123
+          DB_USER: postgres
         run: |
           cd backend/foodgram_project/
           python manage.py test
