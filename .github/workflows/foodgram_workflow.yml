@@ -6,7 +6,7 @@ jobs:
   tests:
     services:
       postgres:
-        image: postgres:10
+        image: postgres:13
         env:
           POSTGRES_DB: test_db
           POSTGRES_USER: test_user

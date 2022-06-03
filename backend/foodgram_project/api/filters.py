@@ -29,7 +29,7 @@ class RecipeFilter(FilterSet):
         queryset=Tag.objects.all(),
         field_name='tags__slug',
         to_field_name='slug',
-        lookup_type='in'
+        lookup_type='in',
         # conjoined=True,
     )
 
