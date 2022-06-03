@@ -60,10 +60,10 @@ class Recipe(models.Model):
         ordering = ('name',)
 
     def __str__(self) -> str:
-        return f'Рецепт: {self.name} пользователя {self.author}'
+        return f'Рецепт: {self.name}'
 
     def __repr__(self) -> str:
-        return f'Рецепт: {self.name} пользователя {self.author}'
+        return f'Рецепт: {self.name}'
 
 
 class RecipeTag(models.Model):

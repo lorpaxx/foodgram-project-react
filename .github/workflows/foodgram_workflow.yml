@@ -80,7 +80,7 @@ jobs:
         with:
           context: backend/foodgram_project
           push: true
-          tags: lorpaxx/foodgram_backend
+          tags: lorpaxx/foodgram_backend:1.0.1
   send_message_build_and_push:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub

@@ -17,7 +17,7 @@ class SubscribeUserAdmin(admin.ModelAdmin):
         'user',
         'author',
     )
-    search_fields = ('user__username', 'author_username')
+    search_fields = ('user__username', 'author__username')
 
 
 admin.site.register(User, UserAdmin)

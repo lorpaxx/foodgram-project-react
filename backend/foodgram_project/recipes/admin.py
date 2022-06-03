@@ -42,7 +42,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'cooking_time',
         'image',
     )
-    list_filter = ('author', )
+    list_filter = ('tags__name', )
 
 
 class RecipeTagAdmin(admin.ModelAdmin):
@@ -76,6 +76,11 @@ class RecipeIngredientAmountAdmin(admin.ModelAdmin):
         'ingredient',
         'amount',
     )
+    search_fields = (
+        'recipe__name',
+        'recipe__author__email',
+        'recipe__author__username',
+    )
 
 
 class UserFavoriteRecipeAdmin(admin.ModelAdmin):
@@ -91,6 +96,11 @@ class UserFavoriteRecipeAdmin(admin.ModelAdmin):
         'user',
         'recipe',
     )
+    search_fields = (
+        'recipe__name',
+        'recipe__author__email',
+        'recipe__author__username',
+    )
 
 
 class UserShoppingCartAdmin(admin.ModelAdmin):
@@ -105,6 +115,11 @@ class UserShoppingCartAdmin(admin.ModelAdmin):
     list_editable = (
         'user',
         'recipe',
+    )
+    search_fields = (
+        'recipe__name',
+        'recipe__author__email',
+        'recipe__author__username',
     )
 
 
