@@ -303,6 +303,18 @@ class ResipeEditSerializer(serializers.ModelSerializer):
                 )
         return values
 
+    def validate(self, data):
+        fields = self.Meta.fields
+        err = []
+        for field in fields:
+            if field == 'image':
+                continue
+            if not data.get(field):
+                err.append({field: 'This field is required'})
+        if len(err) > 0:
+            raise serializers.ValidationError(err)
+        return data
+
     @transaction.atomic
     def create(self, validated_data):
         user = self.context.get('user')
