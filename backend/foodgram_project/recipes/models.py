@@ -110,6 +110,7 @@ class RecipeIngredientAmount(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
         help_text='Рецепт',
+        db_index=True,
     )
     ingredient = models.ForeignKey(
         Ingredient,
@@ -135,10 +136,6 @@ class RecipeIngredientAmount(models.Model):
                 fields=('recipe', 'ingredient'),
                 name='unigue_ingredient_for_recipe'
             ),
-            # models.CheckConstraint(
-            #     check=models.Q(amount__gt=0),
-            #     name='amount_gt_zero'
-            # )
         )
 
     def __str__(self) -> str:
