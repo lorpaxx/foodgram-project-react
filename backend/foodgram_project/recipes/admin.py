@@ -81,6 +81,7 @@ class RecipeIngredientAmountAdmin(admin.ModelAdmin):
         'recipe__author__email',
         'recipe__author__username',
     )
+    raw_id_fields = ('ingredient', 'recipe')
 
 
 class UserFavoriteRecipeAdmin(admin.ModelAdmin):
