@@ -29,7 +29,7 @@ class RecipeFilter(FilterSet):
         queryset=Tag.objects.all(),
         field_name='tags__slug',
         to_field_name='slug',
-        conjoined=True,
+        # conjoined=True,
     )
 
     def get_favorited_filter(self, queryset, name, value):
