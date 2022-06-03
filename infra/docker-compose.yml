@@ -9,7 +9,7 @@ services:
 
   web:
     build:
-      context: ../backend/foodgram_progect
+      context: ../backend/foodgram_project
       dockerfile: Dockerfile
     # image: lorpaxx/foodgram_backend:latest
     restart: always

@@ -241,7 +241,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = ResipeEditSerializer(
-            instance, data=request.data, partial=False
+            instance, data=request.data, partial=True
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
