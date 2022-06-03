@@ -1,5 +1,5 @@
 <!--START_SECTION:badges-->
-![example workflow](https://github.com/lorpaxx/foodgram-project-react/actions/workflows/foodgram_workflow/badge.svg)
+![example workflow](https://github.com/lorpaxx/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 <!--END_SECTION:badges-->
 
 # FoodGram
